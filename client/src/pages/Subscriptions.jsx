@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getSubscriptionsAPI, updateSubscriptionStatusAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import { FiEye, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiEye, FiCheckCircle } from 'react-icons/fi';
 
 const Subscriptions = () => {
+  const { user } = useAuth();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,23 +81,27 @@ const Subscriptions = () => {
                     <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }} title="View Details">
                       <FiEye size={18} />
                     </button>
-                    {sub.status === 'confirmed' && (
-                      <button 
-                        style={{ background: 'none', border: 'none', color: 'var(--success)', cursor: 'pointer' }} 
-                        title="Activate"
-                        onClick={() => handleStatusUpdate(sub._id, 'active')}
-                      >
-                        <FiCheckCircle size={18} />
-                      </button>
-                    )}
-                    {(sub.status === 'draft' || sub.status === 'quotation') && (
-                      <button 
-                        style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer' }} 
-                        title="Confirm"
-                        onClick={() => handleStatusUpdate(sub._id, sub.status === 'draft' ? 'quotation' : 'confirmed')}
-                      >
-                        <FiCheckCircle size={18} />
-                      </button>
+                    {user?.role !== 'portal' && (
+                      <>
+                        {sub.status === 'confirmed' && (
+                          <button 
+                            style={{ background: 'none', border: 'none', color: 'var(--success)', cursor: 'pointer' }} 
+                            title="Activate"
+                            onClick={() => handleStatusUpdate(sub._id, 'active')}
+                          >
+                            <FiCheckCircle size={18} />
+                          </button>
+                        )}
+                        {(sub.status === 'draft' || sub.status === 'quotation') && (
+                          <button 
+                            style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer' }} 
+                            title="Confirm"
+                            onClick={() => handleStatusUpdate(sub._id, sub.status === 'draft' ? 'quotation' : 'confirmed')}
+                          >
+                            <FiCheckCircle size={18} />
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </td>
