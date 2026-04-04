@@ -3,11 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginAPI } from '../services/api';
 import { toast } from 'react-toastify';
-import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -70,22 +71,43 @@ const Login = () => {
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
               <FiLock size={16} color="var(--primary)" /> Password
             </label>
-            <input 
-              type="password" 
-              placeholder="••••••••"
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-              style={{ 
-                height: '48px',
-                padding: '0 16px',
-                background: '#f8fafc', 
-                border: '1px solid #e2e8f0', 
-                borderRadius: '10px',
-                color: 'var(--text-main)',
-                fontSize: '1rem'
-              }}
-            />
+            <div style={{ position: 'relative' }}>
+              <input 
+                type={showPassword ? 'text' : 'password'} 
+                placeholder="••••••••"
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+                style={{ 
+                  height: '48px',
+                  width: '100%',
+                  padding: '0 45px 0 16px',
+                  background: '#f8fafc', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '10px',
+                  color: 'var(--text-main)',
+                  fontSize: '1rem'
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer'
+                }}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button 

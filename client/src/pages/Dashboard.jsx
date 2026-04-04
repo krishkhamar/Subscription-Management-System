@@ -15,6 +15,7 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 import { getDashboardStatsAPI, getRevenueReportAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
 const Dashboard = () => {

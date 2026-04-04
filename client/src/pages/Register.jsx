@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerAPI } from '../services/api';
 import { toast } from 'react-toastify';
-import { FiUser, FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    role: 'portal' // Default role for portal users
+    password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await registerAPI(formData);
+      await registerAPI({ ...formData, role: 'portal' });
       toast.success('Registration successful! Please login.');
       navigate('/login');
     } catch (error) {
@@ -79,35 +79,39 @@ const Register = () => {
             />
           </div>
 
-          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+          <div className="form-group" style={{ marginBottom: '2.5rem' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
               <FiLock size={16} color="var(--primary)" /> Password
             </label>
-            <input 
-              name="password"
-              type="password" 
-              placeholder="••••••••"
-              value={formData.password} 
-              onChange={handleChange} 
-              required 
-              style={{ height: '48px', padding: '0 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', color: 'var(--text-main)' }}
-            />
-          </div>
-
-          <div className="form-group" style={{ marginBottom: '2.5rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
-              <FiLock size={16} color="var(--primary)" /> Account Role
-            </label>
-            <select 
-              name="role"
-              value={formData.role} 
-              onChange={handleChange}
-              style={{ height: '48px', padding: '0 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', color: 'var(--text-main)', width: '100%' }}
-            >
-              <option value="portal">Portal User (Customer)</option>
-              <option value="admin">Administrator (Full Access)</option>
-              <option value="internal">Staff (Operations)</option>
-            </select>
+            <div style={{ position: 'relative' }}>
+              <input 
+                name="password"
+                type={showPassword ? 'text' : 'password'} 
+                placeholder="••••••••"
+                value={formData.password} 
+                onChange={handleChange} 
+                required 
+                style={{ height: '48px', width: '100%', padding: '0 45px 0 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', color: 'var(--text-main)' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer'
+                }}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button 
@@ -121,7 +125,7 @@ const Register = () => {
               fontWeight: 600,
               display: 'flex',
               justifyContent: 'center',
-              boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)'
+              boxShadow: '0 4px 20px rgba(79, 70, 229, 0.2)'
             }}
           >
             {loading ? 'Creating Account...' : (
