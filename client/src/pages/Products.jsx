@@ -1,25 +1,41 @@
 import { useState, useEffect } from 'react';
-import { getProductsAPI } from '../services/api';
+import { getProductsAPI, createProductAPI } from '../services/api';
 import { toast } from 'react-toastify';
-import { FiPackage, FiSearch, FiFilter } from 'react-icons/fi';
+import { FiPackage, FiPlus, FiX } from 'react-icons/fi';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({ productName: '', identifier: '', description: '' });
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { data } = await getProductsAPI();
-        setProducts(data);
-      } catch (error) {
-        toast.error('Failed to load products');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const { data } = await getProductsAPI();
+      setProducts(data);
+    } catch (error) {
+      toast.error('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateProduct = async (e) => {
+    e.preventDefault();
+    try {
+      await createProductAPI(formData);
+      toast.success('Product created successfully!');
+      setShowModal(false);
+      setFormData({ productName: '', identifier: '', description: '' });
+      fetchProducts();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create product');
+    }
+  };
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading Products...</div>;
 
@@ -27,7 +43,9 @@ const Products = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Products</h1>
-        <button className="btn btn-primary">+ Add Product</button>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <FiPlus /> Add Product
+        </button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
@@ -50,6 +68,33 @@ const Products = () => {
           </div>
         ))}
       </div>
+
+      {/* Create Product Modal */}
+      {showModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', background: 'white' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3>Add New Product</h3>
+              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><FiX size={20} /></button>
+            </div>
+            <form onSubmit={handleCreateProduct}>
+              <div className="form-group">
+                <label>Product Name</label>
+                <input type="text" value={formData.productName} onChange={(e) => setFormData({...formData, productName: e.target.value})} placeholder="e.g. Premium Support" required style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px' }} />
+              </div>
+              <div className="form-group">
+                <label>Identifier (Code)</label>
+                <input type="text" value={formData.identifier} onChange={(e) => setFormData({...formData, identifier: e.target.value})} placeholder="e.g. SUP-PREM" required style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px' }} />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Brief service details..." style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px', minHeight: '80px', width: '100%' }} />
+              </div>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px', marginTop: '1rem' }}>Save Product</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
