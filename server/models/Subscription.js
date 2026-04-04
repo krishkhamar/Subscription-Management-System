@@ -67,6 +67,9 @@ const subscriptionSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  },
+  nextBillingDate: {
+    type: Date
   }
 }, {
   timestamps: true

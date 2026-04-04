@@ -84,6 +84,21 @@ const updateSubscriptionStatus = async (req, res) => {
     }
 
     subscription.status = status;
+
+    // If activated, set the next billing date based on the plan
+    if (status === 'active') {
+      const populatedSub = await Subscription.findById(subscription._id).populate('plan');
+      const period = populatedSub.plan.billingPeriod;
+      const nextDate = new Date(); // Start billing cycle from today
+
+      if (period === 'daily') nextDate.setDate(nextDate.getDate() + 1);
+      else if (period === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
+      else if (period === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
+      else if (period === 'yearly') nextDate.setFullYear(nextDate.getFullYear() + 1);
+
+      subscription.nextBillingDate = nextDate;
+    }
+
     await subscription.save();
     res.json(subscription);
   } catch (error) {
