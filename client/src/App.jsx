@@ -7,6 +7,9 @@ import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Subscriptions from './pages/Subscriptions';
+import Invoices from './pages/Invoices';
+import MainLayout from './components/MainLayout';
 
 function App() {
   return (
@@ -18,8 +21,12 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes - Person 2 will add more routes here */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* Protected Routes */}
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/subscriptions" element={<Subscriptions />} />
+            <Route path="/invoices" element={<Invoices />} />
+          </Route>
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/login" />} />

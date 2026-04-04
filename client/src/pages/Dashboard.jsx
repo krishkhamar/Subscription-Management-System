@@ -1,48 +1,117 @@
-// Placeholder - Person 2 & 3 will build the Dashboard
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { 
+  FiTrendingUp, 
+  FiUsers, 
+  FiFileText, 
+  FiAlertCircle 
+} from 'react-icons/fi';
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts';
+import { getDashboardStatsAPI, getRevenueReportAPI } from '../services/api';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const [stats, setStats] = useState(null);
+  const [revenueData, setRevenueData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsRes, revenueRes] = await Promise.all([
+          getDashboardStatsAPI(),
+          getRevenueReportAPI()
+        ]);
+        setStats(statsRes.data);
+        setRevenueData(revenueRes.data);
+      } catch (error) {
+        toast.error('Failed to fetch dashboard data');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>Loading Analytics...</div>;
+
+  const statCards = [
+    { title: 'Total Revenue', value: `$${stats?.totalRevenue || 0}`, icon: <FiTrendingUp />, color: 'var(--primary)' },
+    { title: 'Active Subscriptions', value: stats?.activeSubscriptions || 0, icon: <FiUsers />, color: 'var(--secondary)' },
+    { title: 'Invoices Generated', value: stats?.totalInvoices || 0, icon: <FiFileText />, color: 'var(--accent)' },
+    { title: 'Overdue Invoices', value: stats?.overdueInvoices || 0, icon: <FiAlertCircle />, color: 'var(--danger)' },
+  ];
 
   return (
-    <div className="container" style={{ paddingTop: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1>Dashboard</h1>
-        <div>
-          <span style={{ marginRight: '1rem' }}>Welcome, {user?.name || 'User'} ({user?.role})</span>
-          <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
-        </div>
+    <div>
+      <h1 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: 700 }}>Analytics Overview</h1>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        {statCards.map((card, index) => (
+          <div key={index} className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{card.title}</p>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>{card.value}</h2>
+              </div>
+              <div style={{ padding: '12px', borderRadius: '12px', background: `${card.color}20`, color: card.color, fontSize: '1.2rem' }}>
+                {card.icon}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-        <div className="card">
-          <h3 style={{ color: 'var(--primary)' }}>Products</h3>
-          <p>Manage your products and variants</p>
-        </div>
-        <div className="card">
-          <h3 style={{ color: 'var(--secondary)' }}>Subscriptions</h3>
-          <p>View and manage subscriptions</p>
-        </div>
-        <div className="card">
-          <h3 style={{ color: 'var(--success)' }}>Invoices</h3>
-          <p>Track invoices and payments</p>
-        </div>
-        <div className="card">
-          <h3 style={{ color: 'var(--warning)' }}>Reports</h3>
-          <p>View analytics and reports</p>
+      <div className="card" style={{ padding: '2rem' }}>
+        <h3 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>Revenue Growth (Last 6 Months)</h3>
+        <div style={{ width: '100%', height: 350 }}>
+          <ResponsiveContainer>
+            <AreaChart data={revenueData}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis 
+                dataKey="month" 
+                stroke="var(--text-muted)" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false}
+              />
+              <YAxis 
+                stroke="var(--text-muted)" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false}
+                tickFormatter={(val) => `$${val}`}
+              />
+              <Tooltip 
+                contentStyle={{ background: '#111827', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                itemStyle={{ color: 'var(--text-main)' }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="total" 
+                stroke="var(--primary)" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorRevenue)" 
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
-
-      <p style={{ marginTop: '2rem', color: 'var(--gray-500)', textAlign: 'center' }}>
-        🚧 Person 2: Build out the full dashboard with sidebar navigation, charts, and module pages.
-      </p>
     </div>
   );
 };
