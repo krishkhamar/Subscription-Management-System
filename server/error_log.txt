@@ -1,0 +1,11 @@
+﻿Server running on port 5000
+node : Database connection error: querySrv ECONNREFUSED 
+_mongodb._tcp.cluster0.nit47mu.mongodb.net
+At line:1 char:7
++ try { node server.js 2>&1 | Out-File -Encoding utf8 error_log.txt ; G 
+...
++       ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Database connec...7mu.mong 
+   odb.net:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

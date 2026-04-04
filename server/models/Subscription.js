@@ -73,7 +73,7 @@ const subscriptionSchema = new mongoose.Schema({
 });
 
 // Auto-generate subscription number before saving
-subscriptionSchema.pre('save', async function (next) {
+subscriptionSchema.pre('validate', async function (next) {
   if (!this.subscriptionNumber) {
     const count = await mongoose.model('Subscription').countDocuments();
     this.subscriptionNumber = `SUB-${String(count + 1).padStart(5, '0')}`;

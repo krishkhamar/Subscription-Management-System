@@ -36,7 +36,7 @@ const getInvoice = async (req, res) => {
 const createInvoice = async (req, res) => {
   try {
     const { subscriptionId, dueDate } = req.body;
-    const subscription = await Subscription.findById(subscriptionId).populate('orderLines.product');
+    const subscription = await Subscription.findById(subscriptionId);
     
     if (!subscription) {
       return res.status(404).json({ message: 'Subscription not found' });
