@@ -24,6 +24,12 @@ const createPayment = async (req, res) => {
 
     const invoice = await Invoice.findById(invoiceId);
     if (!invoice) return res.status(404).json({ message: 'Invoice not found' });
+    
+    // Check ownership if portal user
+    if (req.user.role === 'portal' && invoice.customer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to pay this invoice' });
+    }
+    
     if (invoice.status === 'paid') return res.status(400).json({ message: 'Invoice is already paid' });
     if (invoice.status !== 'confirmed') return res.status(400).json({ message: 'Invoice must be confirmed before payment' });
 

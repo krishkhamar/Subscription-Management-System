@@ -5,6 +5,6 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
   .get(protect, getPayments)
-  .post(protect, authorize('admin', 'internal'), createPayment);
+  .post(protect, authorize('admin', 'internal', 'portal'), createPayment);
 
 module.exports = router;

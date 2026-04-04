@@ -2,6 +2,10 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
+const { validatePasswordStrength } = require('../utils/passwordValidate');
+
+const clientBaseUrl = () =>
+  process.env.CLIENT_URL || 'http://localhost:3000';
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -10,22 +14,18 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
-    // Validate password strength
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-={}[\]|;:'",.<>?/`~]).{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({ 
-        message: 'Password must be at least 8 characters with uppercase, lowercase, and special character' 
-      });
+    const pw = validatePasswordStrength(password);
+    if (!pw.ok) {
+      return res.status(400).json({ message: pw.message });
     }
 
-    const role = req.body.role || 'portal';
-    const user = await User.create({ name, email, password, role });
+    // Public signup is always portal; internal users are created by admin only
+    const user = await User.create({ name, email, password, role: 'portal' });
 
     res.status(201).json({
       _id: user._id,
@@ -68,26 +68,31 @@ const loginUser = async (req, res) => {
 // @access  Public
 const forgotPassword = async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(404).json({ message: 'No user found with this email' });
+    const email = req.body.email?.trim()?.toLowerCase();
+    const user = email ? await User.findOne({ email }) : null;
+
+    if (user) {
+      const resetToken = crypto.randomBytes(20).toString('hex');
+      user.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+      user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
+      await user.save();
+
+      const resetUrl = `${clientBaseUrl()}/reset-password/${resetToken}`;
+      await sendEmail({
+        to: user.email,
+        subject: 'Password Reset - Subscription Management System',
+        html: `<p>You requested a password reset.</p><p>Click <a href="${resetUrl}">here</a> to choose a new password.</p><p>This link expires in 30 minutes.</p>`
+      });
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
-    await user.save();
-
-    // Send email
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/auth/reset-password/${resetToken}`;
-    await sendEmail({
-      to: user.email,
-      subject: 'Password Reset - Subscription Management System',
-      html: `<p>You requested a password reset.</p><p>Click <a href="${resetUrl}">here</a> to reset your password.</p><p>This link expires in 30 minutes.</p>`
+    // Same response whether or not the email exists (avoid account enumeration)
+    res.json({
+      message:
+        'If an account exists for that email, we sent password reset instructions.'
     });
-
-    res.json({ message: 'Password reset email sent' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -98,7 +103,10 @@ const forgotPassword = async (req, res) => {
 // @access  Public
 const resetPassword = async (req, res) => {
   try {
-    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.resetToken)
+      .digest('hex');
 
     const user = await User.findOne({
       resetPasswordToken,
@@ -107,6 +115,11 @@ const resetPassword = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+
+    const pw = validatePasswordStrength(req.body.password);
+    if (!pw.ok) {
+      return res.status(400).json({ message: pw.message });
     }
 
     user.password = req.body.password;

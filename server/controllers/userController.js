@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { validatePasswordStrength } = require('../utils/passwordValidate');
 
 // @desc    Get all users (Admin only)
 const getUsers = async (req, res) => {
@@ -25,11 +26,21 @@ const getUser = async (req, res) => {
 const createInternalUser = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
-
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-    const user = await User.create({ name, email, password, phone, role: 'internal' });
+    const pw = validatePasswordStrength(password);
+    if (!pw.ok) {
+      return res.status(400).json({ message: pw.message });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      phone,
+      role: 'internal'
+    });
 
     res.status(201).json({
       _id: user._id,
@@ -45,7 +56,10 @@ const createInternalUser = async (req, res) => {
 // @desc    Update user
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }).select('-password');
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    }).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (error) {

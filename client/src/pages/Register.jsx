@@ -33,57 +33,66 @@ const Register = () => {
   };
 
   return (
-    <div style={{ 
+    <div className="auth-container" style={{ 
       display: 'flex', 
       justifyContent: 'center', 
       alignItems: 'center', 
       minHeight: '100vh',
-      padding: '1rem'
+      padding: '1rem',
+      background: 'radial-gradient(circle at top right, var(--primary-glow), transparent), radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.05), transparent)'
     }}>
-      <div className="card" style={{ width: '100%', maxWidth: '440px', padding: '3rem 2.5rem' }}>
+      <div className="card glass-panel animate-fadeInUp" style={{ width: '100%', maxWidth: '440px', padding: '3rem 2.5rem', border: '1px solid var(--glass-border)', boxShadow: 'var(--shadow-lg)' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem', background: 'linear-gradient(to right, var(--primary), var(--secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <div style={{ display: 'inline-flex', padding: '12px', background: 'rgba(79, 70, 229, 0.1)', borderRadius: '16px', color: 'var(--primary)', marginBottom: '1rem' }}>
+            <FiUser size={32} />
+          </div>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
             Get Started
           </h1>
-          <p style={{ color: 'var(--text-muted)' }}>Create your free subscription account</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Create your free subscription account</p>
         </div>
 
         <form onSubmit={handleRegister}>
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
-              <FiUser size={16} color="var(--primary)" /> Full Name
-            </label>
-            <input 
-              name="name"
-              type="text" 
-              placeholder="John Doe"
-              value={formData.name} 
-              onChange={handleChange} 
-              required 
-              style={{ height: '48px', padding: '0 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', color: 'var(--text-main)' }}
-            />
+          <div className="form-group" style={{ marginBottom: '1.2rem' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)' }}>Full Name</label>
+            <div style={{ position: 'relative' }}>
+              <FiUser style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input 
+                name="name"
+                type="text" 
+                placeholder="John Doe"
+                value={formData.name} 
+                onChange={handleChange} 
+                required 
+                style={{ height: '52px', padding: '0 16px 0 45px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', width: '100%', outline: 'none', transition: '0.3s' }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
-              <FiMail size={16} color="var(--primary)" /> Email Address
-            </label>
-            <input 
-              name="email"
-              type="email" 
-              placeholder="name@company.com"
-              value={formData.email} 
-              onChange={handleChange} 
-              required 
-              style={{ height: '48px', padding: '0 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', color: 'var(--text-main)' }}
-            />
+          <div className="form-group" style={{ marginBottom: '1.2rem' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)' }}>Email Address</label>
+            <div style={{ position: 'relative' }}>
+              <FiMail style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input 
+                name="email"
+                type="email" 
+                placeholder="name@company.com"
+                value={formData.email} 
+                onChange={handleChange} 
+                required 
+                style={{ height: '52px', padding: '0 16px 0 45px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', width: '100%', outline: 'none', transition: '0.3s' }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
+              />
+            </div>
           </div>
 
           <div className="form-group" style={{ marginBottom: '2.5rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
-              <FiLock size={16} color="var(--primary)" /> Password
-            </label>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)' }}>Password</label>
             <div style={{ position: 'relative' }}>
+              <FiLock style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
                 name="password"
                 type={showPassword ? 'text' : 'password'} 
@@ -91,23 +100,14 @@ const Register = () => {
                 value={formData.password} 
                 onChange={handleChange} 
                 required 
-                style={{ height: '48px', width: '100%', padding: '0 45px 0 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', color: 'var(--text-main)' }}
+                style={{ height: '52px', padding: '0 45px 0 45px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'var(--text-main)', width: '100%', outline: 'none', transition: '0.3s' }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'pointer'
-                }}
+                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
               >
                 {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
@@ -118,26 +118,18 @@ const Register = () => {
             type="submit" 
             className="btn btn-primary" 
             disabled={loading}
-            style={{ 
-              width: '100%', 
-              padding: '14px', 
-              fontSize: '1rem', 
-              fontWeight: 600,
-              display: 'flex',
-              justifyContent: 'center',
-              boxShadow: '0 4px 20px rgba(79, 70, 229, 0.2)'
-            }}
+            style={{ width: '100%', padding: '15px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: 'var(--shadow-md)' }}
           >
             {loading ? 'Creating Account...' : (
-              <>
-                Create Account <FiArrowRight style={{ marginLeft: '8px' }} />
-              </>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                Create Account <FiArrowRight />
+              </span>
             )}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-          Already have an account? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign in</Link>
+        <p style={{ textAlign: 'center', marginTop: '2.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+          Already have an account? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>Sign in</Link>
         </p>
       </div>
     </div>

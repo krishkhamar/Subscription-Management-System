@@ -7,7 +7,11 @@ import {
   FiFileText, 
   FiCreditCard, 
   FiUser, 
-  FiLogOut 
+  FiLogOut,
+  FiTag,
+  FiPercent,
+  FiLayers,
+  FiBarChart2
 } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,8 +24,12 @@ const Sidebar = () => {
     { name: 'Invoices', icon: <FiFileText />, path: '/invoices', roles: ['admin', 'internal', 'portal'] },
     { name: 'Payments', icon: <FiCreditCard />, path: '/payments', roles: ['admin', 'internal'] },
     { name: 'Products', icon: <FiPackage />, path: '/products', roles: ['admin', 'internal'] },
-    { name: 'Plans', icon: <FiCalendar />, path: '/plans', roles: ['admin', 'internal'] },
+    { name: 'Recurring Plans', icon: <FiCalendar />, path: '/plans', roles: ['admin', 'internal'] },
+    { name: 'Discounts', icon: <FiTag />, path: '/discounts', roles: ['admin'] },
+    { name: 'Taxes', icon: <FiPercent />, path: '/taxes', roles: ['admin'] },
+    { name: 'Quotation Templates', icon: <FiLayers />, path: '/quotations', roles: ['admin', 'internal'] },
     { name: 'User Management', icon: <FiUser />, path: '/users', roles: ['admin'] },
+    { name: 'Reports', icon: <FiBarChart2 />, path: '/reports', roles: ['admin'] },
   ];
 
   const menuItems = allItems.filter(item => item.roles.includes(user?.role));

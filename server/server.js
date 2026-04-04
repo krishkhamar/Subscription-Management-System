@@ -25,7 +25,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/plans', require('./routes/planRoutes'));
 app.use('/api/subscriptions', require('./routes/subscriptionRoutes'));
-app.use('/api/quotation-templates', require('./routes/quotationTemplateRoutes'));
+app.use('/api/quotations/templates', require('./routes/quotationTemplateRoutes'));
 app.use('/api/invoices', require('./routes/invoiceRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/discounts', require('./routes/discountRoutes'));

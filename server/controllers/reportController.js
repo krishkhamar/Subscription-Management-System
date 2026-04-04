@@ -5,16 +5,28 @@ const Payment = require('../models/Payment');
 // @desc    Get dashboard stats
 const getDashboardStats = async (req, res) => {
   try {
-    const totalSubscriptions = await Subscription.countDocuments();
-    const activeSubscriptions = await Subscription.countDocuments({ status: 'active' });
-    const totalInvoices = await Invoice.countDocuments();
-    const paidInvoices = await Invoice.countDocuments({ status: 'paid' });
+    const filter = {};
+    const paymentFilter = {};
+    
+    if (req.user.role === 'portal') {
+      filter.customer = req.user._id;
+      // For payments, we need to filter by invoice.customer
+      const userInvoices = await Invoice.find({ customer: req.user._id }).select('_id');
+      paymentFilter.invoice = { $in: userInvoices.map(i => i._id) };
+    }
+
+    const totalSubscriptions = await Subscription.countDocuments(filter);
+    const activeSubscriptions = await Subscription.countDocuments({ ...filter, status: 'active' });
+    const totalInvoices = await Invoice.countDocuments(filter);
+    const paidInvoices = await Invoice.countDocuments({ ...filter, status: 'paid' });
     const overdueInvoices = await Invoice.countDocuments({ 
+      ...filter,
       status: { $in: ['draft', 'confirmed'] }, 
       dueDate: { $lt: new Date() } 
     });
 
     const revenueResult = await Payment.aggregate([
+      { $match: paymentFilter },
       { $group: { _id: null, totalRevenue: { $sum: '$amount' } } }
     ]);
     const totalRevenue = revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
@@ -35,16 +47,37 @@ const getDashboardStats = async (req, res) => {
 // @desc    Revenue report
 const getRevenueReport = async (req, res) => {
   try {
-    const revenue = await Payment.aggregate([
+    const { startDate, endDate } = req.query;
+    const matchStage = {};
+    
+    if (startDate || endDate) {
+      matchStage.paymentDate = {};
+      if (startDate) matchStage.paymentDate.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        matchStage.paymentDate.$lte = end;
+      }
+    }
+
+    const pipeline = [];
+    if (Object.keys(matchStage).length > 0) {
+      pipeline.push({ $match: matchStage });
+    }
+
+    pipeline.push(
       {
         $group: {
-          _id: { $dateToString: { format: '%Y-%m', date: '$paymentDate' } },
-          totalAmount: { $sum: '$amount' },
+          _id: { $dateToString: { format: '%m-%Y', date: '$paymentDate' } },
+          total: { $sum: '$amount' },
           count: { $sum: 1 }
         }
       },
-      { $sort: { _id: -1 } }
-    ]);
+      { $project: { _id: 0, month: '$_id', total: 1, count: 1 } },
+      { $sort: { month: -1 } }
+    );
+
+    const revenue = await Payment.aggregate(pipeline);
     res.json(revenue);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

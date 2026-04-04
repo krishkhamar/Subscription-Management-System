@@ -45,21 +45,27 @@ export const createPlanAPI = (data) => API.post('/plans', data);
 export const updatePlanAPI = (id, data) => API.put(`/plans/${id}`, data);
 export const deletePlanAPI = (id) => API.delete(`/plans/${id}`);
 
+// Quotation Templates
+export const getTemplatesAPI = () => API.get('/quotations/templates');
+export const createTemplateAPI = (data) => API.post('/quotations/templates', data);
+export const updateTemplateAPI = (id, data) => API.put(`/quotations/templates/${id}`, data);
+export const deleteTemplateAPI = (id) => API.delete(`/quotations/templates/${id}`);
+
 // Subscriptions
 export const getSubscriptionsAPI = () => API.get('/subscriptions');
 export const getSubscriptionAPI = (id) => API.get(`/subscriptions/${id}`);
 export const createSubscriptionAPI = (data) => API.post('/subscriptions', data);
+export const updateSubscriptionAPI = (id, data) => API.put(`/subscriptions/${id}`, data);
 export const updateSubscriptionStatusAPI = (id, data) => API.put(`/subscriptions/${id}/status`, data);
-
-// Quotation Templates
-export const getTemplatesAPI = () => API.get('/quotation-templates');
-export const createTemplateAPI = (data) => API.post('/quotation-templates', data);
+export const deleteSubscriptionAPI = (id) => API.delete(`/subscriptions/${id}`);
 
 // Invoices
 export const getInvoicesAPI = () => API.get('/invoices');
 export const getInvoiceAPI = (id) => API.get(`/invoices/${id}`);
 export const createInvoiceAPI = (data) => API.post('/invoices', data);
 export const updateInvoiceStatusAPI = (id, data) => API.put(`/invoices/${id}/status`, data);
+export const sendInvoiceAPI = (id) => API.post(`/invoices/${id}/send`);
+export const printInvoiceAPI = (id) => API.get(`/invoices/${id}/print`);
 
 // Payments
 export const getPaymentsAPI = () => API.get('/payments');
@@ -80,10 +86,12 @@ export const deleteTaxAPI = (id) => API.delete(`/taxes/${id}`);
 // Users
 export const getUsersAPI = () => API.get('/users');
 export const createInternalUserAPI = (data) => API.post('/users', data);
+export const updateUserAPI = (id, data) => API.put(`/users/${id}`, data);
+export const deleteUserAPI = (id) => API.delete(`/users/${id}`);
 
 // Reports
 export const getDashboardStatsAPI = () => API.get('/reports/dashboard');
-export const getRevenueReportAPI = () => API.get('/reports/revenue');
+export const getRevenueReportAPI = (startDate, endDate) => API.get('/reports/revenue', { params: { startDate, endDate } });
 export const getSubscriptionReportAPI = () => API.get('/reports/subscriptions');
 export const getOverdueInvoicesAPI = () => API.get('/reports/overdue-invoices');
 
