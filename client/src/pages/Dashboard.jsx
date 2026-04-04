@@ -22,37 +22,46 @@ const Dashboard = () => {
   const [revenueData, setRevenueData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { user } = useAuth();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [statsRes, revenueRes] = await Promise.all([
           getDashboardStatsAPI(),
-          getRevenueReportAPI()
+          user?.role !== 'portal' ? getRevenueReportAPI() : Promise.resolve({ data: [] })
         ]);
         setStats(statsRes.data);
         setRevenueData(revenueRes.data);
       } catch (error) {
         toast.error('Failed to fetch dashboard data');
-        console.error(error);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [user]);
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>Loading Analytics...</div>;
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>Loading Portal...</div>;
 
   const statCards = [
-    { title: 'Total Revenue', value: `$${stats?.totalRevenue || 0}`, icon: <FiTrendingUp />, color: 'var(--primary)' },
-    { title: 'Active Subscriptions', value: stats?.activeSubscriptions || 0, icon: <FiUsers />, color: 'var(--secondary)' },
-    { title: 'Invoices Generated', value: stats?.totalInvoices || 0, icon: <FiFileText />, color: 'var(--accent)' },
-    { title: 'Overdue Invoices', value: stats?.overdueInvoices || 0, icon: <FiAlertCircle />, color: 'var(--danger)' },
+    { title: 'My Total Billing' , value: `$${stats?.totalRevenue || 0}`, icon: <FiTrendingUp />, color: 'var(--primary)', hideFor: [] },
+    { title: 'Active Subscriptions', value: stats?.activeSubscriptions || 0, icon: <FiUsers />, color: 'var(--secondary)', hideFor: [] },
+    { title: 'Invoices Issued', value: stats?.totalInvoices || 0, icon: <FiFileText />, color: 'var(--accent)', hideFor: [] },
+    { title: 'Action Items (Overdue)', value: stats?.overdueInvoices || 0, icon: <FiAlertCircle />, color: 'var(--danger)', hideFor: [] },
   ];
+
+  // Customize titles for Admin
+  if (user?.role === 'admin') {
+    statCards[0].title = 'Total Revenue';
+    statCards[1].title = 'Total Active Subs';
+  }
 
   return (
     <div>
-      <h1 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: 700 }}>Analytics Overview</h1>
+      <h1 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: 700 }}>
+        {user?.role === 'portal' ? 'Customer Portal' : 'Admin Dashboard'}
+      </h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {statCards.map((card, index) => (
@@ -70,48 +79,50 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="card" style={{ padding: '2rem' }}>
-        <h3 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>Revenue Growth (Last 6 Months)</h3>
-        <div style={{ width: '100%', height: 350 }}>
-          <ResponsiveContainer>
-            <AreaChart data={revenueData}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-              <XAxis 
-                dataKey="month" 
-                stroke="var(--text-muted)" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false}
-              />
-              <YAxis 
-                stroke="var(--text-muted)" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false}
-                tickFormatter={(val) => `$${val}`}
-              />
-              <Tooltip 
-                contentStyle={{ background: '#111827', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                itemStyle={{ color: 'var(--text-main)' }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="total" 
-                stroke="var(--primary)" 
-                strokeWidth={3}
-                fillOpacity={1} 
-                fill="url(#colorRevenue)" 
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+      {user?.role !== 'portal' && (
+        <div className="card" style={{ padding: '2rem' }}>
+          <h3 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>Business Growth (Last 6 Months)</h3>
+          <div style={{ width: '100%', height: 350 }}>
+            <ResponsiveContainer>
+              <AreaChart data={revenueData}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} />
+                <XAxis 
+                  dataKey="month" 
+                  stroke="var(--text-muted)" 
+                  fontSize={12} 
+                  tickLine={false} 
+                  axisLine={false}
+                />
+                <YAxis 
+                  stroke="var(--text-muted)" 
+                  fontSize={12} 
+                  tickLine={false} 
+                  axisLine={false}
+                  tickFormatter={(val) => `$${val}`}
+                />
+                <Tooltip 
+                  contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', boxShadow: 'var(--shadow-md)' }}
+                  itemStyle={{ color: 'var(--text-main)' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="total" 
+                  stroke="var(--primary)" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorRevenue)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

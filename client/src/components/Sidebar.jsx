@@ -14,18 +14,17 @@ import { useAuth } from '../context/AuthContext';
 const Sidebar = () => {
   const { logout, user } = useAuth();
 
-  const menuItems = [
-    { name: 'Dashboard', icon: <FiHome />, path: '/dashboard' },
-    { name: 'Products', icon: <FiPackage />, path: '/products' },
-    { name: 'Plans', icon: <FiCalendar />, path: '/plans' },
-    { name: 'Subscriptions', icon: <FiBriefcase />, path: '/subscriptions' },
-    { name: 'Invoices', icon: <FiFileText />, path: '/invoices' },
-    { name: 'Payments', icon: <FiCreditCard />, path: '/payments' },
+  const allItems = [
+    { name: 'Dashboard', icon: <FiHome />, path: '/dashboard', roles: ['admin', 'internal', 'portal'] },
+    { name: 'Subscriptions', icon: <FiBriefcase />, path: '/subscriptions', roles: ['admin', 'internal', 'portal'] },
+    { name: 'Invoices', icon: <FiFileText />, path: '/invoices', roles: ['admin', 'internal', 'portal'] },
+    { name: 'Payments', icon: <FiCreditCard />, path: '/payments', roles: ['admin', 'internal'] },
+    { name: 'Products', icon: <FiPackage />, path: '/products', roles: ['admin', 'internal'] },
+    { name: 'Plans', icon: <FiCalendar />, path: '/plans', roles: ['admin', 'internal'] },
+    { name: 'User Management', icon: <FiUser />, path: '/users', roles: ['admin'] },
   ];
 
-  if (user?.role === 'admin') {
-    menuItems.push({ name: 'User Management', icon: <FiUser />, path: '/users' });
-  }
+  const menuItems = allItems.filter(item => item.roles.includes(user?.role));
 
   return (
     <div className="sidebar">
@@ -49,13 +48,13 @@ const Sidebar = () => {
                   padding: '12px 16px',
                   borderRadius: '12px',
                   color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
-                  background: isActive ? 'rgba(139, 92, 246, 0.15)' : 'transparent',
-                  border: isActive ? '1px solid rgba(139, 92, 246, 0.2)' : '1px solid transparent',
+                  background: isActive ? 'rgba(79, 70, 229, 0.08)' : 'transparent',
+                  border: isActive ? '1px solid rgba(79, 70, 229, 0.1)' : '1px solid transparent',
                   transition: 'all 0.3s ease'
                 })}
               >
                 {item.icon}
-                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{item.name}</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{item.name}</span>
               </NavLink>
             </li>
           ))}

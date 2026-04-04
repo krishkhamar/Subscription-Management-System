@@ -44,9 +44,9 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <FiMail size={14} /> Email Address
+          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
+              <FiMail size={16} color="var(--primary)" /> Email Address
             </label>
             <input 
               type="email" 
@@ -54,13 +54,21 @@ const Login = () => {
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', color: 'white' }}
+              style={{ 
+                height: '48px',
+                padding: '0 16px',
+                background: '#f8fafc', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: '10px',
+                color: 'var(--text-main)',
+                fontSize: '1rem'
+              }}
             />
           </div>
 
-          <div className="form-group" style={{ marginBottom: '2rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <FiLock size={14} /> Password
+          <div className="form-group" style={{ marginBottom: '2.5rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
+              <FiLock size={16} color="var(--primary)" /> Password
             </label>
             <input 
               type="password" 
@@ -68,7 +76,15 @@ const Login = () => {
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
               required 
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', color: 'white' }}
+              style={{ 
+                height: '48px',
+                padding: '0 16px',
+                background: '#f8fafc', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: '10px',
+                color: 'var(--text-main)',
+                fontSize: '1rem'
+              }}
             />
           </div>
 
