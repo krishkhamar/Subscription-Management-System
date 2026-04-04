@@ -60,9 +60,16 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1 style={{ marginBottom: '2rem', fontSize: '2rem', fontWeight: 700 }}>
-        {user?.role === 'portal' ? 'Customer Portal' : 'Admin Dashboard'}
-      </h1>
+      <div style={{ marginBottom: '2.5rem' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+          Welcome back, {user?.name?.split(' ')[0]}! 👋
+        </h1>
+        <p style={{ color: 'var(--text-muted)' }}>
+          {user?.role === 'portal' 
+            ? 'Here is a quick overview of your subscription status and billing.' 
+            : 'Explore your specialized dashboard and operational tools.'}
+        </p>
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {statCards.map((card, index) => (

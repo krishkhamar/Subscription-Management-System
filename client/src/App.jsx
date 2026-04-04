@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Subscriptions from './pages/Subscriptions';
 import Invoices from './pages/Invoices';
 import Users from './pages/Users';
+import Profile from './pages/Profile';
 import MainLayout from './components/MainLayout';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* Default redirect */}

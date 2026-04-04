@@ -18,6 +18,7 @@ const Sidebar = () => {
     { name: 'Dashboard', icon: <FiHome />, path: '/dashboard', roles: ['admin', 'internal', 'portal'] },
     { name: 'Subscriptions', icon: <FiBriefcase />, path: '/subscriptions', roles: ['admin', 'internal', 'portal'] },
     { name: 'Invoices', icon: <FiFileText />, path: '/invoices', roles: ['admin', 'internal', 'portal'] },
+    { name: 'Profile', icon: <FiUser />, path: '/profile', roles: ['admin', 'internal', 'portal'] },
     { name: 'Payments', icon: <FiCreditCard />, path: '/payments', roles: ['admin', 'internal'] },
     { name: 'Products', icon: <FiPackage />, path: '/products', roles: ['admin', 'internal'] },
     { name: 'Plans', icon: <FiCalendar />, path: '/plans', roles: ['admin', 'internal'] },
