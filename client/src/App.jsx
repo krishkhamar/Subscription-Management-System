@@ -9,6 +9,9 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Subscriptions from './pages/Subscriptions';
 import Invoices from './pages/Invoices';
+import Products from './pages/Products';
+import Plans from './pages/Plans';
+import Payments from './pages/Payments';
 import Users from './pages/Users';
 import Profile from './pages/Profile';
 import MainLayout from './components/MainLayout';
@@ -28,6 +31,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/invoices" element={<Invoices />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/plans" element={<Plans />} />
+            <Route path="/payments" element={<Payments />} />
             <Route path="/users" element={<Users />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
