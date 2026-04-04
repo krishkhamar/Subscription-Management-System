@@ -7,7 +7,14 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ productName: '', identifier: '', description: '' });
+  const [formData, setFormData] = useState({ 
+    productName: '', 
+    identifier: '', 
+    description: '',
+    salesPrice: '',
+    productType: 'service', // Backend requires this
+    costPrice: 0 // Optional for now
+  });
 
   useEffect(() => {
     fetchProducts();
@@ -30,7 +37,7 @@ const Products = () => {
       await createProductAPI(formData);
       toast.success('Product created successfully!');
       setShowModal(false);
-      setFormData({ productName: '', identifier: '', description: '' });
+      setFormData({ productName: '', identifier: '', description: '', salesPrice: '', productType: 'service', costPrice: 0 });
       fetchProducts();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create product');
@@ -62,7 +69,10 @@ const Products = () => {
             </div>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', flex: 1 }}>{product.description || 'No description available.'}</p>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
-              <span className="badge badge-active">{product.status}</span>
+              <div>
+                <span className="badge badge-active">{product.status}</span>
+                <span style={{ marginLeft: '10px', fontWeight: 700, color: 'var(--primary)' }}>${product.salesPrice?.toFixed(2)}</span>
+              </div>
               <button style={{ background: 'none', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', cursor: 'pointer' }}>Manage</button>
             </div>
           </div>
@@ -89,6 +99,10 @@ const Products = () => {
               <div className="form-group">
                 <label>Description</label>
                 <textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Brief service details..." style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px', minHeight: '80px', width: '100%' }} />
+              </div>
+              <div className="form-group">
+                <label>Price ($)</label>
+                <input type="number" value={formData.salesPrice} onChange={(e) => setFormData({...formData, salesPrice: e.target.value})} placeholder="0.00" required style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px', width: '100%' }} />
               </div>
               <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px', marginTop: '1rem' }}>Save Product</button>
             </form>
