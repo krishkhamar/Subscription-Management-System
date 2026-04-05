@@ -54,12 +54,9 @@ const Reports = () => {
 
       {/* Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-        <div className="card glass-panel" style={{ background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: 'white', border: 'none' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ opacity: 0.8, fontSize: '0.9rem' }}>Total Revenue</span>
-            <FiTrendingUp />
-          </div>
-          <h2 style={{ fontSize: '2rem', marginTop: '0.5rem' }}>${stats?.totalRevenue?.toLocaleString()}</h2>
+        <div className="card glass-panel" style={{ padding: '2rem', flex: 1 }}>
+          <h3 style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Revenue</h3>
+          <h2 style={{ fontSize: '2rem', marginTop: '0.5rem' }}>₹{stats?.totalRevenue?.toLocaleString()}</h2>
         </div>
         <div className="card glass-panel">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -85,15 +82,15 @@ const Reports = () => {
             {revenueData.slice(0, 5).map((item, idx) => (
               <div key={item.month || idx} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ width: '80px', fontSize: '0.85rem' }}>{item.month}</div>
-                <div style={{ flex: 1, height: '12px', background: '#f1f5f9', borderRadius: '6px', overflow: 'hidden' }}>
+                <div style={{ flex: 1, height: '8px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ 
                         width: `${Math.min((item.total / (revenueData[0]?.total || 1)) * 100, 100)}%`, 
                         height: '100%', 
                         background: 'var(--primary)',
-                        borderRadius: '6px'
+                        borderRadius: '4px' 
                     }}></div>
                 </div>
-                <div style={{ width: '80px', textAlign: 'right', fontWeight: 600, fontSize: '0.9rem' }}>${item.total?.toLocaleString()}</div>
+                <div style={{ width: '80px', textAlign: 'right', fontWeight: 600, fontSize: '0.9rem' }}>₹{item.total?.toLocaleString()}</div>
               </div>
             ))}
             {revenueData.length === 0 && <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No financial records found.</p>}
@@ -108,7 +105,7 @@ const Reports = () => {
               <div key={inv._id} style={{ padding: '0.8rem', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.1)', borderRadius: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '4px' }}>
                   <span style={{ fontWeight: 700 }}>{inv.invoiceNumber}</span>
-                  <span style={{ color: '#ef4444', fontWeight: 600 }}>${inv.totalAmount.toFixed(2)}</span>
+                  <span style={{ color: '#ef4444', fontWeight: 600 }}>₹{inv.totalAmount.toFixed(2)}</span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{inv.customer?.name}</div>
                 <div style={{ fontSize: '0.7rem', color: '#b91c1c', marginTop: '4px' }}>Due: {new Date(inv.dueDate).toLocaleDateString()}</div>

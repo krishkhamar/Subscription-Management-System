@@ -63,13 +63,18 @@ export const deleteSubscriptionAPI = (id) => API.delete(`/subscriptions/${id}`);
 export const getInvoicesAPI = () => API.get('/invoices');
 export const getInvoiceAPI = (id) => API.get(`/invoices/${id}`);
 export const createInvoiceAPI = (data) => API.post('/invoices', data);
+export const updateInvoiceAPI = (id, data) => API.put(`/invoices/${id}`, data);
+export const deleteInvoiceAPI = (id) => API.delete(`/invoices/${id}`);
 export const updateInvoiceStatusAPI = (id, data) => API.put(`/invoices/${id}/status`, data);
 export const sendInvoiceAPI = (id) => API.post(`/invoices/${id}/send`);
 export const printInvoiceAPI = (id) => API.get(`/invoices/${id}/print`);
 
 // Payments
 export const getPaymentsAPI = () => API.get('/payments');
+export const getPaymentConfigAPI = () => API.get('/payments/config');
 export const createPaymentAPI = (data) => API.post('/payments', data);
+export const createRazorpayOrderAPI = (data) => API.post('/payments/razorpay/order', data);
+export const verifyRazorpayPaymentAPI = (data) => API.post('/payments/razorpay/verify', data);
 
 // Discounts
 export const getDiscountsAPI = () => API.get('/discounts');

@@ -20,7 +20,11 @@ const Login = () => {
       const { data } = await loginAPI({ email, password });
       login(data);
       toast.success('Welcome back!');
-      navigate('/dashboard');
+      if (data.role === 'portal') {
+        navigate('/shop');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Invalid credentials');
     } finally {

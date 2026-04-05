@@ -54,6 +54,14 @@ const subscriptionSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  paymentMethod: {
+    type: String,
+    trim: true
+  },
+  paymentDone: {
+    type: Boolean,
+    default: false
+  },
   orderLines: [orderLineSchema],
   status: {
     type: String,
@@ -65,6 +73,10 @@ const subscriptionSchema = new mongoose.Schema({
     default: 0
   },
   createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  salesperson: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },

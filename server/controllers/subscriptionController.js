@@ -15,7 +15,8 @@ const getSubscriptions = async (req, res) => {
     const subscriptions = await Subscription.find(filter)
       .populate('customer', 'name email')
       .populate('plan', 'planName billingPeriod price')
-      .populate('orderLines.product', 'productName');
+      .populate('orderLines.product', 'productName')
+      .populate('salesperson', 'name email');
     res.json(subscriptions);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -28,7 +29,8 @@ const getSubscription = async (req, res) => {
     const subscription = await Subscription.findById(req.params.id)
       .populate('customer', 'name email phone')
       .populate('plan', 'planName billingPeriod price')
-      .populate('orderLines.product', 'productName salesPrice');
+      .populate('orderLines.product', 'productName salesPrice')
+      .populate('salesperson', 'name email');
     if (!subscription) {
       return res.status(404).json({ message: 'Subscription not found' });
     }
@@ -55,7 +57,27 @@ const createSubscription = async (req, res) => {
       totalAmount,
       createdBy: req.user._id
     });
-    res.status(201).json(subscription);
+
+    // Auto-generate invoice if the status is 'confirmed' (standard for portal checkouts)
+    let invoiceId = null;
+    if (subscription.status === 'confirmed') {
+      const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const built = await buildInvoicePayloadFromSubscription(
+        subscription._id,
+        dueDate,
+        req.user._id
+      );
+      if (!built.error) {
+        const invoice = await Invoice.create(built.payload);
+        await incrementDiscountUsage(built.appliedDiscountIds);
+        invoiceId = invoice._id;
+      }
+    }
+
+    res.status(201).json({
+      ...subscription.toObject(),
+      invoiceId
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

@@ -54,7 +54,7 @@ const Payments = () => {
                     <FiCreditCard size={14} /> {pay.paymentMethod?.replace('_', ' ')}
                   </div>
                 </td>
-                <td style={{ padding: '1.2rem 1.5rem', fontWeight: 700 }}>${pay.amount?.toFixed(2)}</td>
+                <td style={{ padding: '1.2rem 1.5rem', fontWeight: 700 }}>₹{pay.amount?.toFixed(2)}</td>
                 <td style={{ padding: '1.2rem 1.5rem' }}>
                   <span className="badge badge-active" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <FiCheckCircle size={12} /> Success

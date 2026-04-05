@@ -110,7 +110,7 @@ const Products = () => {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                 {product.variants.map((v, i) => (
                   <span key={i} style={{ fontSize: '0.7rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>
-                    {v.attribute}: {v.value} (+${v.extraPrice})
+                    {v.attribute}: {v.value} (+₹{v.extraPrice})
                   </span>
                 ))}
               </div>
@@ -118,8 +118,8 @@ const Products = () => {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)', marginTop: 'auto' }}>
               <div>
-                <span style={{ fontWeight: 700, color: 'var(--primary)' }}>${product.salesPrice?.toFixed(2)}</span>
-                {product.costPrice > 0 && <span style={{ marginLeft: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Cost: ${product.costPrice?.toFixed(2)}</span>}
+                <span style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{product.salesPrice?.toFixed(2)}</span>
+                {product.costPrice > 0 && <span style={{ marginLeft: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Cost: ₹{product.costPrice?.toFixed(2)}</span>}
               </div>
               <div style={{ display: 'flex', gap: '6px' }}>
                 <button onClick={() => openEdit(product)} style={{ background: 'none', border: '1px solid #e2e8f0', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', color: 'var(--primary)' }} title="Edit"><FiEdit2 size={14} /></button>
@@ -152,7 +152,7 @@ const Products = () => {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group">
-                  <label>Sales Price ($)</label>
+                  <label>Sales Price (₹)</label>
                   <input type="number" value={formData.salesPrice} onChange={(e) => setFormData({...formData, salesPrice: e.target.value})} placeholder="0.00" required style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px', width: '100%' }} />
                 </div>
                 <div className="form-group">

@@ -96,6 +96,7 @@ async function buildInvoicePayloadFromSubscription(subscriptionId, dueDate, crea
     totalDiscount,
     totalAmount
   };
+  if (subscription.salesperson) payload.salesperson = subscription.salesperson;
   if (createdBy) payload.createdBy = createdBy;
 
   return {

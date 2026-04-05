@@ -18,6 +18,7 @@ const getInvoices = async (req, res) => {
     const invoices = await Invoice.find(filter)
       .populate('customer', 'name email')
       .populate('subscription', 'subscriptionNumber')
+      .populate('salesperson', 'name email')
       .sort({ createdAt: -1 });
     res.json(invoices);
   } catch (error) {
@@ -31,7 +32,8 @@ const getInvoice = async (req, res) => {
     const invoice = await Invoice.findById(req.params.id)
       .populate('customer', 'name email phone')
       .populate('subscription', 'subscriptionNumber plan')
-      .populate('lines.product', 'productName');
+      .populate('lines.product', 'productName')
+      .populate('salesperson', 'name email');
     if (!invoice) return res.status(404).json({ message: 'Invoice not found' });
     if (
       req.user.role === 'portal' &&
